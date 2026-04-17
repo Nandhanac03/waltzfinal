@@ -1,0 +1,302 @@
+<?php
+
+defined('BASEPATH') or exit('No direct script access allowed');
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+class Candidate extends CO_Panel_Controller
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+        //loading models
+        $this->load->model('Candidate_model', 'candidate_model');
+        $this->load->model('News_model', 'news_model');
+        $this->load->model('Language_model', 'language_model');
+        $this->load->model('Country_model', 'country_model');
+        //configuration
+        $controller_config = array();
+        $controller_config['disable_candidate_edit'] = TRUE;
+        $controller_config['disable_candidate_delete'] = FALSE;
+        $controller_config['disable_candidate_add'] = TRUE;
+        $controller_config['disable_candidate_languages'] = FALSE;
+        $controller_config['disable_candidate_name'] = TRUE;
+        $controller_config['disable_candidate_address'] = FALSE;
+        $controller_config['disable_candidate_email'] = FALSE;
+        $controller_config['disable_candidate_phone'] = FALSE;
+        $controller_config['disable_candidate_fax'] = TRUE;
+        $controller_config['disable_candidate_working_hours'] = TRUE;
+        $controller_config['disable_candidate_map'] = TRUE;
+        $this->data['controller_config'] = $controller_config;
+
+        $country_list = $this->country_model->get_countries();
+        $temp_country = array();
+        foreach ($country_list as $country) {
+            $temp_country[$country->id] = $country->name;
+        }
+        $this->data['country_list'] = $temp_country;
+    }
+
+    public function index()
+    {
+        redirect('panel/candidate/all', 'refresh');
+    }
+
+    public function all()
+    {
+        if(isset($_SESSION['filter'])) {
+            unset($_SESSION['filter']);
+        }
+        //candidates list view
+        $filter = array();
+        $this->form_validation->set_rules('filterCandidateCreatedAt', 'status', 'trim');
+        $this->form_validation->set_rules('filterCandidateTitle', 'title', 'trim');
+        if ($this->form_validation->run() === TRUE) {
+            //filter the result based on search
+            $filter['title'] = $this->input->post('filterCandidateTitle');
+            $filter['post'] = $this->input->post('filterCandidatePost');
+            $filter['country'] = $this->input->post('filterCandidateCountry');
+            $filter['gender'] = $this->input->post('filterCandidateGender');
+            if ($this->input->post('filterCandidateCreatedAt') != '') {
+                $filter['from_created_at'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $this->input->post('filterCandidateCreatedAt'))));
+                $filter['to_created_at'] = date('Y-m-d 23:59:59', strtotime(str_replace('/', '-', $this->input->post('filterCandidateCreatedAt'))));
+            }
+            if ($this->input->post('filterCandidateExperience') != '') {
+                $exp = explode("-", $this->input->post('filterCandidateExperience'));
+                $filter['from_exp'] = (int) trim($exp[0]);
+                $filter['to_exp'] = (int) (isset($exp[1])) ? trim($exp[1]) : trim($exp[0]);
+            }
+        }
+        $this->session->set_userdata('filter', $filter);
+        $this->data['careers'] = $this->news_model->get_all_news();
+        $this->data['candidates'] = $this->candidate_model->get_all($filter);
+        $this->data['active_menu'] = 'candidate';
+        $this->data['site_content'] = 'candidate';
+        $this->load->view('panel/content', $this->data);
+    }
+
+    public function view($candidate_id)
+    {
+        $filter = array();
+        if(isset($_SESSION['filter']) && $_SESSION['filter']) {
+            $filter = $_SESSION['filter'];
+        }
+
+        if (!$candidate_id) {
+            redirect('panel/candidate/all', 'refresh');
+        }
+        $country_list = $this->country_model->get_countries();
+        $temp_country = array();
+        foreach ($country_list as $country) {
+            $temp_country[$country->id] = $country->name;
+        }
+        $this->data['country_list'] = $temp_country;
+
+        $this->data['careers'] = $this->news_model->get_all_news();
+        $this->data['candidates'] = $this->candidate_model->get($candidate_id);
+
+        $filter['next_val'] = $candidate_id;
+        $next_candidates = $this->candidate_model->get_all($filter);
+
+        unset($filter['next_val']);
+        $filter['prev_val'] = $candidate_id;
+        $prev_candidates = $this->candidate_model->get_all($filter);
+
+        // echo '<pre>'; print_r($next_candidates); print_r($prev_candidates); exit;
+        if($next_candidates){
+            //show next tab
+            $this->data['next_val']  =   $next_candidates[0]->id;
+        }else{
+            $this->data['next_val']  =   0;
+        }
+        if($prev_candidates){
+            //show prev tab            
+            $this->data['prev_val']  =   $prev_candidates[0]->id;
+        }else{
+            $this->data['prev_val']  =   0;
+        }
+        
+        $this->data['active_menu'] = 'candidate';
+        $this->data['site_content'] = 'view_candidate';
+        $this->load->view('panel/content', $this->data);
+    }
+
+    public function downloadExcel()
+    {
+        $filter = array();
+        $filter['title'] = $this->input->post('filterCandidateTitle');
+        $filter['post'] = $this->input->post('filterCandidatePost');
+        $filter['country'] = $this->input->post('filterCandidateCountry');
+        $filter['gender'] = $this->input->post('filterCandidateGender');
+        if ($this->input->post('filterCandidateCreatedAt') != '') {
+            $filter['from_created_at'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $this->input->post('filterCandidateCreatedAt'))));
+            $filter['to_created_at'] = date('Y-m-d 23:59:59', strtotime(str_replace('/', '-', $this->input->post('filterCandidateCreatedAt'))));
+        }
+        if ($this->input->post('filterCandidateExperience') != '') {
+            $exp = explode("-", $this->input->post('filterCandidateExperience'));
+            $filter['from_exp'] = (int) trim($exp[0]);
+            $filter['to_exp'] = (int) (isset($exp[1])) ? trim($exp[1]) : trim($exp[0]);
+        }
+
+        $data = $this->candidate_model->get_all($filter);
+
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+            ],
+            'borders' => [
+                'top' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Sl.No.');
+        $sheet->setCellValue('B1', 'Candidate Name');
+        $sheet->setCellValue('C1', 'Nationality');
+        $sheet->setCellValue('D1', 'Mobile No. With WhatsApp');
+        $sheet->setCellValue('E1', 'Email');
+        $sheet->setCellValue('F1', 'Current Location');
+        $sheet->setCellValue('G1', 'Notice Period');
+        $sheet->setCellValue('H1', 'Join Now');
+        $sheet->setCellValue('I1', 'Gender');
+        $sheet->setCellValue('J1', 'Highest Degree');
+        $sheet->setCellValue('K1', 'Current Job Role');
+        $sheet->setCellValue('L1', 'Experience');
+        $sheet->setCellValue('M1', 'Post Applied');       
+        $sheet->setCellValue('N1', 'Date');
+        $sheet->setCellValue('O1', 'Download Resume');
+
+        $sheet->getColumnDimension('A')->setWidth(8); // Sl.No.
+        $sheet->getColumnDimension('B')->setWidth(20); // Candidate
+        $sheet->getColumnDimension('C')->setWidth(12); // Experience
+        $sheet->getColumnDimension('D')->setWidth(25); // Post
+        $sheet->getColumnDimension('E')->setWidth(20); // Current Company
+        $sheet->getColumnDimension('F')->setWidth(20); // Job Role
+        $sheet->getColumnDimension('G')->setWidth(20); // Email
+        $sheet->getColumnDimension('H')->setWidth(12); // Phone
+        $sheet->getColumnDimension('I')->setWidth(12); // Address
+        $sheet->getColumnDimension('J')->setWidth(20); // Country
+        $sheet->getColumnDimension('K')->setWidth(20); // Gender
+        $sheet->getColumnDimension('L')->setWidth(12); // Date
+        $sheet->getColumnDimension('M')->setWidth(25); // Resume
+        $sheet->getColumnDimension('N')->setWidth(12); // Resume
+        $sheet->getColumnDimension('O')->setWidth(30); // Resume
+
+
+        $sheet->getStyle('A1')->applyFromArray($styleArray);
+        $sheet->getStyle('B1')->applyFromArray($styleArray);
+        $sheet->getStyle('C1')->applyFromArray($styleArray);
+        $sheet->getStyle('D1')->applyFromArray($styleArray);
+        $sheet->getStyle('E1')->applyFromArray($styleArray);
+        $sheet->getStyle('F1')->applyFromArray($styleArray);
+        $sheet->getStyle('G1')->applyFromArray($styleArray);
+        $sheet->getStyle('H1')->applyFromArray($styleArray);
+        $sheet->getStyle('I1')->applyFromArray($styleArray);
+        $sheet->getStyle('J1')->applyFromArray($styleArray);
+        $sheet->getStyle('K1')->applyFromArray($styleArray);
+        $sheet->getStyle('L1')->applyFromArray($styleArray);
+        $sheet->getStyle('M1')->applyFromArray($styleArray);
+        $sheet->getStyle('N1')->applyFromArray($styleArray);
+        $sheet->getStyle('O1')->applyFromArray($styleArray);
+
+
+        $styleColArray = [
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+            ],
+        ];
+        $styleDownloadArray = [
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+            'font' => [
+                'color' => [
+                    'argb' => '0000FF',
+                ]
+            ]
+        ];
+
+        $row = 2;
+        if ($data) {
+            foreach ($data as $key => $value) {
+                $country = ($value->country) ? $this->data['country_list'][$value->country] : '';
+                 $phonecode='';
+                if($value->phonecode) {
+                    $phonecode  =$value->phonecode.' ';
+                }
+                $fullphonenumber =$phonecode.$value->phone;
+                if($value->notice_period==1){
+                    $notice_period   =   "0 Days";
+                }else if($value->notice_period==15){
+                    $notice_period   =   "15 Days";
+                }else if($value->notice_period==30){
+                    $notice_period   =   "30 Days";
+                }else if($value->notice_period==45){
+                    $notice_period   =   "More than 30 Days";
+                }else{
+                    $notice_period   =   "";
+                }
+                $sheet->setCellValue('A' . ($key + $row), $key + 1); // Sl.No.
+                $sheet->setCellValue('B' . ($key + $row), $value->full_name); // Candidate
+                $sheet->setCellValue('C' . ($key + $row), $country); // Nationality
+                $sheet->setCellValue('D' . ($key + $row), strval($fullphonenumber)); // Post
+                $sheet->setCellValue('E' . ($key + $row), $value->email); // Current Company
+                $sheet->setCellValue('F' . ($key + $row), $value->current_loc); // Job Role
+                $sheet->setCellValue('G' . ($key + $row), $notice_period); // Email
+                $sheet->setCellValue('H' . ($key + $row), $value->join_now); // Phone
+                $sheet->setCellValue('I' . ($key + $row), $value->gender); // Address
+                $sheet->setCellValue('J' . ($key + $row), $value->company); // Country
+                $sheet->setCellValue('K' . ($key + $row), $value->job_role); // Gender
+                $sheet->setCellValue('L' . ($key + $row), $value->experience); // Gender
+                $sheet->setCellValue('M' . ($key + $row), $value->post); // Gender
+                $sheet->setCellValue('N' . ($key + $row), date('d-m-Y', strtotime($value->created_at))); // Date
+                $sheet->setCellValue('O' . ($key + $row), 'Download'); // Resume
+                $sheet->getCell('O' . ($key + $row))->getHyperlink()->setUrl(base_url("assets/uploads/career/") . $value->resume);
+
+                $sheet->getStyle('A' . ($key + $row))->applyFromArray($styleColArray); //Sl No Align Center
+                $sheet->getStyle('C' . ($key + $row))->applyFromArray($styleColArray); //Experience Align Center
+
+                $sheet->getStyle('O' . ($key + $row))->applyFromArray($styleDownloadArray); //Date Align Center
+
+                $sheet->getStyle('B' . ($key + $row))->getAlignment()->setWrapText(true); // Name Wrap Text
+                $sheet->getStyle('D' . ($key + $row))->getAlignment()->setWrapText(true); // Post Wrap Text
+                $sheet->getStyle('E' . ($key + $row))->getAlignment()->setWrapText(true); // Company Wrap Text
+                $sheet->getStyle('F' . ($key + $row))->getAlignment()->setWrapText(true); // Job Role Wrap Text
+                $sheet->getStyle('I' . ($key + $row))->getAlignment()->setWrapText(true); // Address Wrap Text
+
+                $sheet->getStyle('H' . ($key + $row))->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT); // Phone number field as text
+            }
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        $filename = 'candidate-list-' . date('d-m-Y') . '-' . rand (10,100);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output'); // download file
+
+    }
+
+    public function delete($id, $lang = '1')
+    {
+        if ($id > 0 && $lang == '1') {
+            $candidate = $this->candidate_model->get($id);
+            if ($id > 0 && $lang > 0) {
+                $this->candidate_model->disable($id);
+            }
+        }
+        $this->session->set_flashdata('success', 'Candidate deleted successfully.');
+        redirect('panel/candidate/all', 'refresh');
+    }
+}
