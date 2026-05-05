@@ -115,7 +115,7 @@
 								</div>-->
 
 							<div class="pbmit-right-box d-flex align-items-center">
-								<?php if ($active_menu != 'contact') { ?>
+								<?php if ($active_menu != 'contact_us') { ?>
 									<div class="pbmit-button-box">
 										<a href="<?= base_url('contact_us') ?>" class="pbmit-btn">
 											<span class="pbmit-button-text">Contact Us</span>

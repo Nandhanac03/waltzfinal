@@ -8,7 +8,7 @@ $config['disable_lm_album']=FALSE;
 $config['disable_lm_contact']=FALSE;
 $config['disable_lm_career']=true;
 $config['disable_lm_article']=TRUE;
-$config['disable_lm_socialmedia']=TRUE;
+$config['disable_lm_socialmedia']=false;
 $config['disable_lm_status_counter']=false;
 $config['disable_lm_candidate']=true;
 $config['disable_lm_jobs']=true;
@@ -40,5 +40,5 @@ $config['disable_lm_termsofservice']=false;
 $config['disable_lm_privacypolicy']=false;
 $config['disable_lm_orders']=true;
 $config['disable_lm_why_work_with_us']=TRUE;
-
+$config['disable_lm_userguide']=FALSE;
 $config['disable_lm_ecommerce']=false;

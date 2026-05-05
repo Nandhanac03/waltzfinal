@@ -26,7 +26,7 @@
                 <?php endif; ?>
 
                 <!------------------------------------- ECOMMERCE ------------------------------------->
-                <?php if (config_item('disable_lm_ecommerce') != TRUE) { ?>
+                <!-- <?php if (config_item('disable_lm_ecommerce') != TRUE) { ?>
                     <li class="nav-item has-treeview <?= in_array($active_menu, array('direct_order', 'product_category', 'product', 'product_order', 'product_group', 'product_attribute', 'product_order', 'product_quotation', 'product_inquiry', 'product', 'product_category')) ? 'menu-open' : '' ?>">
                         <a href="#" class="nav-link <?= in_array($active_menu, array('direct_order', 'product_category', 'product', 'product_order', 'product_group', 'product_attribute', 'product_order', 'product_quotation', 'product_inquiry', 'product', 'product_category')) ? 'active' : '' ?>">
                             <i class="nav-icon fas fa-store"></i>
@@ -65,7 +65,7 @@
                             <?php endif; ?>
                             <li class="nav-item">
                                 <a href="<?= site_url('panel/product/all') ?>" class="nav-link <?= $active_menu == 'product' ? 'active text-danger' : '' ?>"> <i class="fas fa-boxes nav-icon"></i>
-                                    <!-- $active_menu_group == 'product' || -->
+                                  
                                     <p>Products</p>
                                 </a>
                             </li>
@@ -92,9 +92,20 @@
                             <?php endif; ?>
                         </ul>
                     </li>
-                <?php } ?>
+                <?php } ?> -->
 
-               
+               <!-- ----------------products------------------------------ -->
+               <?php if (config_item('disable_lm_product') != TRUE) : ?>
+                    <li class="nav-item">
+                        <a href="<?= site_url('panel/product/all') ?>" class="nav-link <?= $active_menu == 'product' ? 'active text-danger' : '' ?>"> <i class="nav-icon fas fa-boxes nav-icon"></i>
+                            <p>Products</p>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+
+
+               <!-- ---------------------------------------------- -->
 
                  <!------------------------------------- solution ------------------------------------->
                  <?php if (config_item('disable_lm_solution') != TRUE) : ?>
@@ -422,6 +433,36 @@
                         </a>
                     </li>
                 <?php endif; ?>
+
+
+
+                <?php if (config_item('disable_lm_userguide') != TRUE) : ?>
+                    <li class="nav-item has-treeview <?= in_array($active_menu, array('userguide', 'userguide_view')) ? 'menu-open' : '' ?>">
+                        <a href="#" class="nav-link <?= in_array($active_menu, array('userguide', 'userguide_view')) ? 'active' : '' ?>">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>
+                                Userguide <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?= site_url('panel/userguide/all') ?>" class="nav-link <?= $active_menu == 'userguide' ? 'active text-danger' : '' ?>"> <i class="fas fa-edit nav-icon"></i>
+                                    <p>Manage</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= site_url('panel/userguide/view') ?>" class="nav-link <?= $active_menu == 'userguide_view' ? 'active text-danger' : '' ?>"> <i class="fas fa-eye nav-icon"></i>
+                                    <p>View</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+
+
+
+
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

@@ -24,10 +24,10 @@
                 <div class="col-12">
                     <?= $alert ?>
                     <div class="card">
-                        <div class="card-header">
+                        <!-- <div class="card-header">
                             <h4 class="card-title">Product</h4>
                             <a href="<?= site_url('panel/product/add') ?>" class="btn btn-sm btn-info float-right" title="Add"><i class="fas fa-user-plus"></i> Add</a>
-                        </div>
+                        </div> -->
                         <!-- /.card-header -->
                         <div class="card-body">
                             <form role="form" method="post" action="<?= site_url('panel/product/all') ?>">
@@ -116,7 +116,7 @@
                                                 </td>
                                                 <td>
                                                     <a href="<?= site_url('panel/product/edit/' . $product->id . '/' . $product->language) ?>" title='Edit' class="btn-sm btn-primary"><i class="fas fa-user-edit"></i></a>
-                                                    <a href="#" class="btn-sm btn-danger trigger_alert_modal" data-title="Confirm" data-desc="Are you sure want to delete this? <p class='text-danger'><i>(If you confirm, the item will be permanently removed from the server. The process cannot be reverted.)</i></p>" data-redirect="<?= site_url('panel/product/delete_product/' . $product->id) ?>" title='Delete'><i class="fas fa-trash-alt"></i></a>
+                                                    <!-- <a href="#" class="btn-sm btn-danger trigger_alert_modal" data-title="Confirm" data-desc="Are you sure want to delete this? <p class='text-danger'><i>(If you confirm, the item will be permanently removed from the server. The process cannot be reverted.)</i></p>" data-redirect="<?= site_url('panel/product/delete_product/' . $product->id) ?>" title='Delete'><i class="fas fa-trash-alt"></i></a> -->
                                                 
                                                 
                                                 

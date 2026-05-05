@@ -51,7 +51,19 @@
                                         ?>
                                     </ul>
                                 <?php endif; ?>
+
+
+
+                                <?php 
+$isHomeBanner = ($album->id == 1); 
+?>
+
+<?php 
+$isProductBanner = ($album->id == 4); 
+?>
+
                                 <div class="row">
+                                <?php if ($isHomeBanner) { ?>
                                     <div class="form-group col-sm-12">
                                         <label for="fileTitle">Title <span class="text-danger">*</span></label>
                                         <input type="text"
@@ -60,6 +72,8 @@
                                                value="<?= set_value('fileTitle', empty($album_file_desc->title) ? '' : $album_file_desc->title) ?>">
                                                <?php echo form_error('fileTitle'); ?>
                                     </div>
+                                    <?php } ?>
+                                   <?php if ($isProductBanner) { ?>
                                     <?php if ($controller_config['disable_album_file_subtitle'] !== TRUE): ?>
                                         <div class="form-group col-sm-12">
                                             <label for="fileSubtitle">Subtitle</label>
@@ -70,7 +84,9 @@
                                                    <?php echo form_error('fileSubtitle'); ?>
                                         </div>
                                     <?php endif; ?>
-                                    <?php if ($controller_config['disable_album_file_short_desc'] !== TRUE): ?>
+                             <?php } ?>
+                             <?php if ($isHomeBanner) { ?>
+                                    <?php if ($controller_config['disable_album_file_short_desc'] == TRUE): ?>
                                         <div class="form-group col-sm-12">
                                             <label for="fileShortDesc">Short Description</label>
                                             <textarea class="form-control ckeditor"
@@ -80,6 +96,7 @@
                                                       <?php echo form_error('fileShortDesc'); ?>
                                         </div>
                                     <?php endif; ?>
+                                 
                                     <?php if ($controller_config['disable_album_file_desc'] !== TRUE): ?>
                                     <div class="form-group col-sm-12">
                                         <label for="fileDescription">Description</label>
@@ -91,6 +108,7 @@
                                                   <?php echo form_error('fileDescription'); ?>
                                     </div>
                                     <?php endif; ?>
+                                   
                                     <?php if ($controller_config['disable_album_file_link'] !== TRUE): ?>
                                         <div class="form-group col-sm-12">
                                             <label for="fileLink">Link</label>
@@ -101,6 +119,7 @@
                                                    <?php echo form_error('fileLink'); ?>
                                         </div>
                                     <?php endif; ?>
+                                   
                                     <?php if ($controller_config['disable_album_file_button_name'] !== TRUE): ?>
                                         <div class="form-group col-sm-12">
                                             <label for="fileButtonName">Button Name</label>
@@ -109,6 +128,17 @@
                                                    id="fileButtonName" placeholder="Button Name" name="fileButtonName"
                                                    value="<?= set_value('fileButtonName', empty($album_file_desc->button_name) ? '' : $album_file_desc->button_name) ?>">
                                                    <?php echo form_error('fileButtonName'); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php } ?>
+                                    <?php if ($album->id == 2) : ?>
+                                        <div class="form-group col-sm-12">
+                                            <label for="fileOrder">Order</label>
+                                            <select class="form-control" id="fileOrder" name="fileOrder">
+                                                <?php for ($i = 1; $i <= $total_files; $i++) : ?>
+                                                    <option value="<?= $i ?>" <?= (isset($album_file->order) && $album_file->order == $i) ? 'selected' : '' ?>><?= $i ?></option>
+                                                <?php endfor; ?>
+                                            </select>
                                         </div>
                                     <?php endif; ?>
                                     <?php if ($controller_config['disable_album_file_browse'] !== TRUE): ?>
@@ -142,6 +172,10 @@
                                         <button type="submit" class="btn btn-success float-right">Save</button>
                                     </div>
                                 </div>
+
+
+
+
                             </div>
                         </form>
                     </div>

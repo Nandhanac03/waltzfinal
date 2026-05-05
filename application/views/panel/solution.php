@@ -24,13 +24,13 @@
                 <div class="col-12">
                     <?= $alert ?>
                     <div class="card">
-                        <div class="card-header">
+                        <!-- <div class="card-header">
                             <h4 class="card-title">solution</h4>
                             <a href="<?= site_url('panel/solution/add') ?>" class="btn btn-sm btn-info float-right" title="Add"><i class="fas fa-user-plus"></i> Add</a>
-                        </div>
+                        </div> -->
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <form role="form" method="post" action="<?= site_url('panel/solution/all') ?>">
+                            <!-- <form role="form" method="post" action="<?= site_url('panel/solution/all') ?>">
                                 <div class="row mt-2 mb-4">
                                     <div class="col-sm-3">
                                         <div class="form-group">
@@ -58,7 +58,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </form> -->
                             <table class="table table-bordered table-striped data-table-search-off">
                                 <thead>
                                     <tr>
@@ -89,7 +89,7 @@
                                                 </td>
                                                 <td>
                                                     <a href="<?= site_url('panel/solution/edit/' . $solution->id . '/' . $solution->language) ?>" title='Edit' class="btn-sm btn-primary"><i class="fas fa-user-edit"></i></a>
-                                                    <a href="#" class="btn-sm btn-danger trigger_alert_modal" data-title="Confirm" data-desc="Are you sure want to delete this? <p class='text-danger'><i>(If you confirm, the item will be permanently removed from the server. The process cannot be reverted.)</i></p>" data-redirect="<?= site_url('panel/solution/delete_solution/' . $solution->id) ?>" title='Delete'><i class="fas fa-trash-alt"></i></a>
+                                                    <!-- <a href="#" class="btn-sm btn-danger trigger_alert_modal" data-title="Confirm" data-desc="Are you sure want to delete this? <p class='text-danger'><i>(If you confirm, the item will be permanently removed from the server. The process cannot be reverted.)</i></p>" data-redirect="<?= site_url('panel/solution/delete_solution/' . $solution->id) ?>" title='Delete'><i class="fas fa-trash-alt"></i></a> -->
                                                 </td>
                                             </tr>
                                     <?php

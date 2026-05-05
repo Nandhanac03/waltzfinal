@@ -93,6 +93,10 @@ class Album extends CO_Panel_Controller
                         $input_data['created_at'] = time();
                         $input_data['created_by'] = $_SESSION['user_id'];
                         $input_data['active'] = 1;
+                        if ($album_id == 2) {
+                            $max_order = $this->file_model->get_max_order($album_id, $lang);
+                            $input_data['order'] = $max_order + 1;
+                        }
                         $file_id = $this->file_model->add($input_data);
                         if ($file_id > 0) {
                             $this->album_model->set_album_cover($album_id, $file_name);
@@ -189,7 +193,10 @@ class Album extends CO_Panel_Controller
                         $input_data['created_at'] = time();
                         $input_data['created_by'] = $_SESSION['user_id'];
                         $input_data['active'] = 1;
-                        // echo"<pre>";print_r($input_data);exit;
+                        if ($id == 2) {
+                            $max_order = $this->file_model->get_max_order($id, $lang);
+                            $input_data['order'] = $max_order + 1;
+                        }
                         $file_id = $this->file_model->add($input_data);
                         if ($file_id > 0) {
                             // echo"wprl";exit;
@@ -237,6 +244,7 @@ class Album extends CO_Panel_Controller
             $this->data['controller_config']['disable_album_file_browse'] = TRUE;
         }
         $album = $this->album_model->get($album_id);
+       
         $current_language = $this->language_model->get_language($lang);
         $album_parent_file = $this->file_model->get_file($id, $album_id, 'I', 'A', true, 1);
         $album_file = $this->file_model->get_file($id, $album_id, 'I', 'A', true, $lang);
@@ -317,6 +325,20 @@ class Album extends CO_Panel_Controller
                     $no_error = FALSE;
                 }
             }
+
+            if ($album_id == 2) {
+                $new_order = $this->input->post('fileOrder');
+                $old_order = $album_file->order;
+
+                if ($new_order != $old_order) {
+                    $swapping_file = $this->file_model->get_file_by_order($album_id, $new_order, $lang);
+                    if ($swapping_file) {
+                        $this->file_model->update(['order' => $old_order], $swapping_file->id);
+                    }
+                    $this->file_model->update(['order' => $new_order], $album_file->id);
+                }
+            }
+
             $this->session->set_flashdata('success', 'Saved successfully.');
             redirect('panel/album/edit_file/' . $album->id . '/' . $album_file->id . '/' . $current_language->id, 'refresh');
         }
@@ -327,6 +349,9 @@ class Album extends CO_Panel_Controller
         $this->data['languages'] = $languages;
         $this->data['album_parent_file'] = $album_parent_file;
         $this->data['album_file'] = $album_file;
+        if ($album_id == 2) {
+            $this->data['total_files'] = count($this->file_model->get_all($album_id, $lang, 'I', 'A'));
+        }
         $this->data['active_menu'] = 'album';
         $this->data['site_content'] = 'edit_file';
         $this->load->view('panel/content', $this->data);

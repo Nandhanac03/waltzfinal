@@ -87,7 +87,7 @@
 
 							<div class="member-content">
 
-								<h3>Our Vision</h3>
+								<h3><?= $vision->title ?></h3>
 
 								<p><?= $vision->short_desc ?></p>
 
@@ -131,7 +131,7 @@
 
 							<div class="member-content">
 
-								<h3>Our Mission</h3>
+								<h3><?= $mission->title ?></h3>
 
 								<p>
 									<?= $mission->subtitle ?>
@@ -199,7 +199,7 @@
 
 						<div class="title text-center">
 
-							<h2>Our Core Values</h2>
+							<h2><?= $core_value->title ?></h2>
 
 						</div>
 

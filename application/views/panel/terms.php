@@ -33,7 +33,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <form role="form" method="post" action="<?= site_url('panel/news/all') ?>">
+                            <!-- <form role="form" method="post" action="<?= site_url('panel/news/all') ?>">
                                 <div class="row mt-2 mb-4">
                                     <?php if ($controller_config['disable_news_type'] != TRUE): ?>
                                         <div class="col-sm-3">
@@ -101,7 +101,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            </form> -->
                             <table class="table table-bordered table-striped data-table-search-off">
                                 <thead>
                                     <tr>

@@ -51,16 +51,16 @@
                                     <?php endif; ?>
 
 
-                                    <div class="form-group col-sm-12">
+                                    <!-- <div class="form-group col-sm-12">
                                         <label for="solutionName">Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control <?= $current_language->direction == 'rtl' ? 'direction-rtl' : '' ?>" id="solutionName" placeholder="Name" name="solutionName" value="<?= set_value('solutionName') ?>" onchange="generate_slug_title(this, 'solutionSlugTitle')">
                                         <?php echo form_error('solutionName'); ?>
-                                    </div>
+                                    </div> -->
                                     <?php if ($controller_config['disable_pr_title'] != TRUE) : ?>
                                         <div class="form-group col-sm-12">
-                                            <label for="solutionTitle">Title <span class="text-danger"></span></label>
-                                            <input type="text" class="form-control <?= $current_language->direction == 'rtl' ? 'direction-rtl' : '' ?>" id="solutionTitle" placeholder="Title" name="solutionTitle" value="<?= set_value('solutionTitle') ?>" onchange="generate_slug_title(this, 'solutionSlugTitle')">
-                                            <?php echo form_error('solutionTitle'); ?>
+                                            <label for="solutionName">Title <span class="text-danger"></span></label>
+                                            <input type="text" class="form-control <?= $current_language->direction == 'rtl' ? 'direction-rtl' : '' ?>" id="solutionName" placeholder="Title" name="solutionName" value="<?= set_value('solutionName') ?>" onchange="generate_slug_title(this, 'solutionSlugTitle')">
+                                            <?php echo form_error('solutionName'); ?>
                                         </div>
                                     <?php endif; ?>
                                     <?php if ($controller_config['disable_pr_slugtitle'] != TRUE) : ?>

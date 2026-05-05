@@ -24,12 +24,12 @@
                 <div class="col-sm-12">
                     <?= $alert ?>
                     <div class="card">
-                        <div class="card-header">
+                        <!-- <div class="card-header">
                             <h4 class="card-title">Categories</h4>
                             <a href="<?= site_url('panel/solution_category/add') ?>"
                                class="btn btn-sm btn-info float-right" title="Add"><i class="fas fa-user-plus"></i> Add
                                </a>
-                        </div>
+                        </div> -->
                         <!-- /.card-header -->
                         <!-- form start -->
                         <form role="form" method="post" action="<?= site_url('panel/solution_category/all') ?>"

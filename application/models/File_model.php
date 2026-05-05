@@ -53,29 +53,65 @@ class file_model extends CO_Core_Model
 
    
   
-  
-  
-  
-   public function get_all_by_order($parent_id = '', $lang = '', $file_type = '', $file_for = '')
+    public function get_all_by_order($parent_id = '', $lang = '', $file_type = '', $file_for = '')
     {
-        $query = "select f.*,fd.title as title,fd.subtitle as subtitle,fd.button_name as button_name,fd.link as link,
-       fd.short_desc as short_desc, fd.description as description from files as f left join files_description as fd on f.id=fd.file_id 
-       where f.active=1 and fd.active=1";
-        if ($parent_id != '') {
-            $query .= " and f.parent_id='$parent_id'";
+        $this->db->select('f.*, 
+            fd.title, 
+            fd.subtitle, 
+            fd.button_name, 
+            fd.link,
+            fd.short_desc, 
+            fd.description');
+    
+        $this->db->from('files as f');
+        $this->db->join('files_description as fd', 'f.id = fd.file_id', 'left');
+    
+        $this->db->where('f.active', 1);
+        $this->db->where('fd.active', 1);
+    
+        if (!empty($parent_id)) {
+            $this->db->where('f.parent_id', $parent_id);
         }
-        if ($lang != '') {
-            $query .= " and fd.language='$lang'";
+    
+        if (!empty($lang)) {
+            $this->db->where('fd.language', $lang);
         }
-        if ($file_type != '') {
-            $query .= " and f.file_type='$file_type'";
+    
+        if (!empty($file_type)) {
+            $this->db->where('f.file_type', $file_type);
         }
-        if ($file_for != '') {
-            $query .= " and f.file_for='$file_for'";
+    
+        if (!empty($file_for)) {
+            $this->db->where('f.file_for', $file_for);
         }
-        $query .= " order by f.order asc";
-        return $this->full_query($query);
+    
+        // ✅ THIS IS KEY FOR ORDERING
+        $this->db->order_by('f.order', 'ASC');
+    
+        return $this->db->get()->result();
     }
+  
+  
+//    public function get_all_by_order($parent_id = '', $lang = '', $file_type = '', $file_for = '')
+//     {
+//         $query = "select f.*,fd.title as title,fd.subtitle as subtitle,fd.button_name as button_name,fd.link as link,
+//        fd.short_desc as short_desc, fd.description as description from files as f left join files_description as fd on f.id=fd.file_id 
+//        where f.active=1 and fd.active=1";
+//         if ($parent_id != '') {
+//             $query .= " and f.parent_id='$parent_id'";
+//         }
+//         if ($lang != '') {
+//             $query .= " and fd.language='$lang'";
+//         }
+//         if ($file_type != '') {
+//             $query .= " and f.file_type='$file_type'";
+//         }
+//         if ($file_for != '') {
+//             $query .= " and f.file_for='$file_for'";
+//         }
+//         $query .= " order by f.order asc";
+//         return $this->full_query($query);
+//     }
   
   
   
@@ -183,6 +219,19 @@ class file_model extends CO_Core_Model
                 return false;
             }
         }
+    }
+
+    public function get_max_order($parent_id, $lang = 1)
+    {
+        $query = "SELECT MAX(`order`) as max_order FROM files WHERE parent_id = '$parent_id' AND language = '$lang'";
+        $result = $this->full_query($query, TRUE);
+        return ($result) ? $result->max_order : 0;
+    }
+
+    public function get_file_by_order($parent_id, $order, $lang = 1)
+    {
+        $where = "parent_id = '$parent_id' AND `order` = '$order' AND language = '$lang' AND active = '1'";
+        return $this->select("*", $where, TRUE);
     }
 
 }

@@ -78,22 +78,35 @@
 
 
 					 <div class="col-md-2 pbmit-footer-left">
- 						<ul class="pbmit-social-links">
- 							<li class="pbmit-social-li pbmit-social-youtube">
- 								<a title="tiktok" href="#" target="_blank">
- 									<span><img src="<?= base_url('assets/web/images/tiktok.png') ?>" /></span>
- 								</a>
- 							</li>
- 							<li class="pbmit-social-li pbmit-social-youtube">
- 								<a
- 									title="linkedin"
- 									href="https://www.linkedin.com/company/waltzsolutionsandservices/"
- 									target="_blank">
- 									<span><img src="<?= base_url('assets/web/images/linkedin.png') ?>" /></span>
- 								</a>
- 							</li>
- 						</ul>
- 					</div>
+    <ul class="pbmit-social-links">
+
+        <?php if (!empty($social_twitter)) : ?>
+        <li class="pbmit-social-li pbmit-social-youtube">
+            <a title="tiktok" href="<?= $social_twitter->url; ?>" target="_blank">
+                <span><img src="<?= base_url('assets/web/images/tiktok.png') ?>" /></span>
+            </a>
+        </li>
+        <?php endif; ?>
+
+        <?php if (!empty($social_linkedin)) : ?>
+        <li class="pbmit-social-li pbmit-social-youtube">
+            <a title="linkedin" href="<?= $social_linkedin->url; ?>" target="_blank">
+                <span><img src="<?= base_url('assets/web/images/linkedin.png') ?>" /></span>
+            </a>
+        </li>
+        <?php endif; ?>
+
+        <?php if (!empty($social_instagram)) : ?>
+        <li class="pbmit-social-li pbmit-social-youtube">
+            <a title="instagram" href="<?= $social_instagram->url; ?>" target="_blank">
+                <span><img src="<?= base_url('assets/web/images/instagram.png') ?>" /></span>
+            </a>
+        </li>
+        <?php endif; ?>
+
+    </ul>
+</div>
+
  				</div>
  			</div>
  		</div>
@@ -105,7 +118,7 @@
  					<div class="col-md-6">
  						<div class="pbmit-footer-copyright-text-area">
  							Copyright © 2026,
- 							<a href="https://waltz.ae/">WALTZ Solutions and Services</a>, All Rights Reserved.<br />
+ 							<a href="https://waltz.ae/">WALTZ Solutions and Services</a>, All Rights Reserved.
  							Created By
  							<a href="https://arabinfotechllc.com/" target="_blank">
  								Arabinfotec</a>

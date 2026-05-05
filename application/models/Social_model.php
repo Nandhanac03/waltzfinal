@@ -26,6 +26,17 @@ class Social_model extends CO_Core_Model {
         return $this->select("*", $where, TRUE);
     }
 
+
+    public function get_socialmedia_all($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->where('status', 1); // ONLY ACTIVE
+        return $this->db->get($this->tableName)->row(); // FIXED
+    }
+    
+    
+    
+
     public function update($data, $id) {
         $where = "id='$id'";
         return $this->insert($data, $where);

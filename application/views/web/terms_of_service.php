@@ -16,7 +16,9 @@
 </div>
 <!-- Title Bar End-->
 <!-- Page Content -->
+<!-- Page Content -->
 <div class="page-content">
+
   <section class="brd">
     <div class="container">
       <div class="row">
@@ -26,7 +28,6 @@
               <a href="<?= base_url() ?>">Home</a>
             </li>
             <li>---</li>
-
             <li class="active">Terms of Use</li>
           </ol>
         </div>
@@ -41,19 +42,16 @@
           <h2><?= $terms->title ?></h2>
 
           <?php if ($terms->short_desc) { ?>
-            <p><?= $terms->short_desc ?>
-            </p>
+            <p><?= $terms->short_desc ?></p>
           <?php } else { ?>
             <p>Coming soon</p>
           <?php } ?>
+
         </div>
-
-
       </div>
     </div>
   </section>
 
-
-  <!-- End section -->
 </div>
 <!-- Page Content End -->
+

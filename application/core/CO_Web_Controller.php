@@ -101,10 +101,10 @@ class CO_Web_Controller extends CO_Core_Controller
         // exit;
 
 
-        $this->data['social_facebook'] = $this->social_model->get_socialmedia(1);
-        $this->data['social_instagram'] = $this->social_model->get_socialmedia(2);
-        $this->data['social_twitter'] = $this->social_model->get_socialmedia(4);
-        $this->data['social_linkedin'] = $this->social_model->get_socialmedia(5);
+        $this->data['social_facebook'] = $this->social_model->get_socialmedia_all(1);
+        $this->data['social_instagram'] = $this->social_model->get_socialmedia_all(2);
+        $this->data['social_twitter'] = $this->social_model->get_socialmedia_all(4);
+        $this->data['social_linkedin'] = $this->social_model->get_socialmedia_all(5);
         // echo"<pre>";print_r($this->data['logo']);exit;
 
 

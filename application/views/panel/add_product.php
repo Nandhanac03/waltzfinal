@@ -72,18 +72,28 @@
                                             <?php echo form_error('productBrand'); ?>
                                         </div>
                                     <?php endif; ?>
-                                    <div class="form-group col-sm-12">
+                                    <!-- <div class="form-group col-sm-12">
                                         <label for="productName">Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control <?= $current_language->direction == 'rtl' ? 'direction-rtl' : '' ?>" id="productName" placeholder="Name" name="productName" value="<?= set_value('productName') ?>" onchange="generate_slug_title(this, 'productSlugTitle')">
                                         <?php echo form_error('productName'); ?>
-                                    </div>
+                                    </div> -->
+
                                     <?php if ($controller_config['disable_pr_title'] != TRUE) : ?>
+                                        <div class="form-group col-sm-12">
+                                            <label for="productName">Name <span class="text-danger"></span></label>
+                                            <input type="text" class="form-control <?= $current_language->direction == 'rtl' ? 'direction-rtl' : '' ?>" id="productName" placeholder="Title" name="productName" value="<?= set_value('productName') ?>" onchange="generate_slug_title(this, 'productSlugTitle')">
+                                            <?php echo form_error('productName'); ?>
+                                        </div>
+                                    <?php endif; ?>
+
+
+                                    <!-- <?php if ($controller_config['disable_pr_title'] != TRUE) : ?>
                                         <div class="form-group col-sm-12">
                                             <label for="productTitle">Title <span class="text-danger"></span></label>
                                             <input type="text" class="form-control <?= $current_language->direction == 'rtl' ? 'direction-rtl' : '' ?>" id="productTitle" placeholder="Title" name="productTitle" value="<?= set_value('productTitle') ?>" onchange="generate_slug_title(this, 'productSlugTitle')">
                                             <?php echo form_error('productTitle'); ?>
                                         </div>
-                                    <?php endif; ?>
+                                    <?php endif; ?> -->
                                     <?php if ($controller_config['disable_pr_slugtitle'] != TRUE) : ?>
                                         <div class="form-group col-sm-12">
                                             <label for="productSlugTitle">Slug Title <span class="text-danger"></span></label>

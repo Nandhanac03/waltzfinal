@@ -35,6 +35,7 @@ class Status extends CO_Panel_Controller
         $controller_config['disable_news_published_at'] = TRUE;
         $controller_config['disable_news_created_at'] = TRUE;
         $controller_config['disable_status_add'] = true;
+        $controller_config['disable_bio_description_img'] = FALSE;
         $this->data['controller_config'] = $controller_config;
     }
 
@@ -103,47 +104,96 @@ class Status extends CO_Panel_Controller
     }
     public function edit($id, $lang = 1)
     {
-        // echo"$id";
-        if ($id > 0) {
-            $status = $this->status_model->get($id);
+        $status = $this->status_model->get($id);
+        if (!$status) {
+            redirect('panel/status/all', 'refresh');
         }
-        $filter = array();
-        $filter['status'] = 1;
-        $filter['for_site'] = 1;
-        
+    
         $this->form_validation->set_rules('statusTitle', 'title', 'trim|required');
         $this->form_validation->set_rules('statusCounter', 'counter', 'trim');
-        if (!$status || empty($status->slug_title) || $status->slug_title != $this->input->post('statusSlugTitle')) {
-            $this->form_validation->set_rules('statusSlugTitle', 'slug_title', 'trim|required|is_unique[status.slug_title]');
-        }
+    
         if ($this->form_validation->run() === TRUE) {
+    
             $input_data = array();
             $no_error = TRUE;
+    
             $input_data['title'] = $this->input->post('statusTitle');
             $input_data['slug_title'] = $this->input->post('statusSlugTitle');
             $input_data['count'] = $this->input->post('statusCounter');
-            $input_data['created_at'] = time();
-            $input_data['created_by'] = $_SESSION['user_id'];
-            $input_data['active'] = 1;
-            
-            if ($no_error == TRUE) {
-                if ($status) {
-                    $this->status_model->add($input_data, $status->id);
+            $input_data['updated_at'] = time();
+            $input_data['updated_by'] = $_SESSION['user_id'];
+    
+            // ✅ IMAGE UPLOAD START
+            $config['upload_path'] = './assets/uploads/status/';
+            $config['allowed_types'] = 'jpg|jpeg|png';
+            $config['encrypt_name'] = TRUE;
+            $config['max_size'] = config_item('MAX_IMG_FILE_SIZE');
+    
+            if (!empty($_FILES['bioDescImg']['name'])) {
+    
+                $file_info = array(
+                    'field_name' => 'bioDescImg',
+                    'file' => $_FILES['bioDescImg']
+                );
+    
+                $upload_result = image_upload($file_info, $config, FALSE, TRUE);
+    
+                if (!$upload_result['error']) {
+    
+                    $file_name = $upload_result['file_name'];
+    
+                    // ✅ DELETE OLD IMAGE
+                    if (!empty($status->image)) {
+                        if (file_exists('./assets/uploads/status/' . $status->image)) {
+                            unlink('./assets/uploads/status/' . $status->image);
+                        }
+                        if (file_exists('./assets/uploads/status/thumb_' . $status->image)) {
+                            unlink('./assets/uploads/status/thumb_' . $status->image);
+                        }
+                    }
+    
+                    $input_data['image'] = $file_name;
+    
                 } else {
-                    $this->status_model->add($input_data);
+                    $this->data['bioDescImgError'] = $upload_result['error_msg'];
+                    $no_error = FALSE;
                 }
             }
-            if ($no_error == FALSE) {
-                $this->session->set_flashdata('error', 'Something went wrong, Please try again.');
-            } else {
-                $this->session->set_flashdata('success', 'Saved successfully.');
+            // ✅ IMAGE UPLOAD END
+    
+            // ✅ SAVE DATA
+            if ($no_error == TRUE) {
+                $this->status_model->add($input_data, $status->id);
+    
+                $this->session->set_flashdata('success', 'Updated successfully.');
                 redirect('panel/status/all', 'refresh');
+            } else {
+                $this->session->set_flashdata('error', 'Image upload failed.');
             }
         }
-
+    
         $this->data['status'] = $status;
         $this->data['active_menu'] = 'status';
         $this->data['site_content'] = 'edit_status';
+        $this->data['bioDescImgError'] = '';
+    
         $this->load->view('panel/content', $this->data);
+    }
+    public function delete_cover_img($id)
+    {
+        if ($id > 0) {
+            $status = $this->status_model->get($id);
+            if ($status && !empty($status->image)) {
+                if (file_exists('./assets/uploads/status/' . $status->image)) {
+                    unlink('./assets/uploads/status/' . $status->image);
+                }
+                if (file_exists('./assets/uploads/status/thumb_' . $status->image)) {
+                    unlink('./assets/uploads/status/thumb_' . $status->image);
+                }
+                $this->status_model->add(['image' => ''], $id);
+                $this->session->set_flashdata('success', 'Image deleted successfully.');
+            }
+        }
+        redirect('panel/status/edit/' . $id);
     }
 }

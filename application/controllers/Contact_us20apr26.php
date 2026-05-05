@@ -26,12 +26,7 @@ class Contact_us extends CO_Web_Controller
         $this->data['panel'] = $this->settings_model->get(1);
 // print_r($this->data['panel']);
 // exit;
-      
-      
-      
-       // Get settings
- 
-
+        // echo"<pre>";print_r($this->data['contact']);exit;
         $this->data['active_menu'] = 'contact';
         $this->data['site_content'] = 'contact_us';
         $this->load->view('web/content', $this->data);
@@ -57,33 +52,17 @@ class Contact_us extends CO_Web_Controller
         // }
 
 
+        $settings = $this->settings_model->get(1); // create if not exists
 
-    $panel = $this->settings_model->get(1);
-
-    $cc_emails = [];
-
-    if (!empty($panel->contact_email)) {
-
-
-        $rawEmails = explode(',', $panel->contact_email);
-
-        foreach ($rawEmails as $email) {
-            $email = trim($email);
-
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $cc_emails[] = $email;
-            }
-        }
+$emails = [];
+foreach ($settings as $row) {
+    if (filter_var($row->value, FILTER_VALIDATE_EMAIL)) {
+        $emails[] = $row->value;
     }
+}
 
-
-    if (empty($cc_emails)) {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'No admin emails found.'
-        ]);
-        return;
-    }
+// print_r($settings);
+// exit;
 
 
         // reCAPTCHA validation
@@ -126,28 +105,28 @@ class Contact_us extends CO_Web_Controller
         $contact_message = $this->input->post('contact_message');
 
         $subject = config_item('WEBSITE_TITLE') . " | Contact from " . $contact_name;
-      //  $common_contact = $this->contact_model->get_by_lang(1, $_SESSION['lang']);
+        $common_contact = $this->contact_model->get_by_lang(1, $_SESSION['lang']);
 
-       // $mail_to = $contact_email;
+        $mail_to = $common_contact->email;
       	
 
         $body = '
         <div style="background:#f5f7fa; padding:30px; font-family:Arial, sans-serif;">
             <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
         
-                <div style="background:#9E1E20; padding:20px; text-align:center; color:#ffffff;">
+                <div style="background:#4e73df; padding:20px; text-align:center; color:#ffffff;">
                     <h2 style="margin:0; font-weight:600;">New Contact Message</h2>
                 </div>
         
                 <div style="padding:25px; color:#333333; font-size:15px; line-height:1.6;">
                     
-                    <p><strong style="color:#9E1E20;">Name:</strong> ' . $contact_name . '</p>
-                    <p><strong style="color:#9E1E20;">Email:</strong> ' . $contact_email . '</p>
-                    <p><strong style="color:#9E1E20;">Phone:</strong> ' . $contact_phone . '</p>
-                    <p><strong style="color:#9E1E20;">Subject:</strong> ' . $contact_subject . '</p>
+                    <p><strong style="color:#4e73df;">Name:</strong> ' . $contact_name . '</p>
+                    <p><strong style="color:#4e73df;">Email:</strong> ' . $contact_email . '</p>
+                    <p><strong style="color:#4e73df;">Phone:</strong> ' . $contact_phone . '</p>
+                    <p><strong style="color:#4e73df;">Subject:</strong> ' . $contact_subject . '</p>
         
-                    <div style="margin-top:20px; padding:15px; background:#f1f3f5; border-left:4px solid #9E1E20; border-radius:6px;">
-                        <p style="margin:0;"><strong style="color:#9E1E20;">Message:</strong><br>' . nl2br($contact_message) . '</p>
+                    <div style="margin-top:20px; padding:15px; background:#f1f3f5; border-left:4px solid #4e73df; border-radius:6px;">
+                        <p style="margin:0;"><strong style="color:#4e73df;">Message:</strong><br>' . nl2br($contact_message) . '</p>
                     </div>
         
                 </div>
@@ -162,21 +141,16 @@ class Contact_us extends CO_Web_Controller
 
 
 
-    $cc_emails = array_unique($cc_emails);
-    $cc_emails = array_diff($cc_emails, [$contact_email]);
+        $this->email->from($config_mail['FROM_EMAIL'], $config_mail['FROM_NAME']);
+        $this->email->cc('nandhana@virtualsystechnologies.com');
+        $this->email->to($mail_to);
+        // $this->email->to($emails);
+      //  $this->email->cc('nandhana@virtualsystechnologies.com');
 
-    $this->email->from($config_mail['FROM_EMAIL'], $config_mail['FROM_NAME']);
 
-    $this->email->to($contact_email);
 
-    if (!empty($cc_emails)) {
-        $this->email->cc($cc_emails);
-    }
-
-    $this->email->reply_to($contact_email, $contact_name);
-    $this->email->subject($subject);
-    $this->email->message($body);
-
+        $this->email->subject($subject);
+        $this->email->message($body);
 
         if ($this->email->send()) {
             echo json_encode(['status' => 'success', 'message' => 'Your message has been sent successfully!']);
