@@ -30,7 +30,7 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form role="form" method="post" action="<?= site_url('panel/status/add') ?>" id="statusForm">
+                        <form role="form" method="post" action="<?= site_url('panel/status/add') ?>" id="statusForm" enctype="multipart/form-data">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-sm-12">
@@ -50,6 +50,27 @@
                                             <label for="statusCounter">Count</label>
                                             <input type="text" class="form-control" id="statusCouter" placeholder="Count" name="statusCounter" value="<?= set_value('statusCounter') ?>">
                                             <?php echo form_error('statusCounter'); ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($controller_config['disable_bio_description_img'] != TRUE): ?>
+                                        <div class="form-group col-sm-12">
+                                            <label for="bioDescImg">Description Image <a href="javascript:void(0)"
+                                                    class="text-info"
+                                                    data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="<?= config_item('MAX_IMG_FILE_SIZE_MSG') ?>"><i
+                                                        class="fa fa-info-circle"></i></a></label>
+                                            <div class="tower-file">
+                                                <input type="file" class="custom_fileInput" name="bioDescImg"
+                                                    id="bioDescImg" accept=".png,.jpg,.jpeg">
+                                                <label for="bioDescImg" class="tower-file-button"> <span
+                                                        class="mdi mdi-upload"></span>Browse </label>
+                                                <button type="button" class="tower-file-clear tower-file-button">
+                                                    Clear
+                                                </button>
+                                            </div>
+                                            <div id="bioDescImgError" class="error-text"><?= $bioDescImgError ?></div>
                                         </div>
                                     <?php endif; ?>
 

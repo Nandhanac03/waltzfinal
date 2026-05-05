@@ -55,37 +55,15 @@
 
 
 
-                                    <?php if ($controller_config['disable_bio_description_img'] != TRUE): ?>
-                                        <div class="form-group col-sm-12">
-                                            <label for="bioDescImg">Description Image <a href="javascript:void(0)"
-                                                    class="text-info"
-                                                    data-toggle="tooltip"
-                                                    data-placement="top"
-                                                    title="<?= config_item('MAX_IMG_FILE_SIZE_MSG') ?>"><i
-                                                        class="fa fa-info-circle"></i></a></label>
-                                            <div class="tower-file">
-                                                <input type="file" class="custom_fileInput" name="bioDescImg"
-                                                    id="bioDescImg" accept=".png,.jpg,.jpeg">
-                                                <label for="bioDescImg" class="tower-file-button"> <span
-                                                        class="mdi mdi-upload"></span>Browse </label>
-                                                <button type="button" class="tower-file-clear tower-file-button">
-                                                    Clear
-                                                </button>
-                                            </div>
-                                            <div id="bioDescImgError" class="error-text"><?= $bioDescImgError ?></div>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php if (!empty($status->image)) : ?>
-                                        <div class="col-sm-12">
-                                            <div class="file-img-container">
-                                                <div class="file-img-container-option">
-                                                    <a href="javascript:void(0)" class="file_edit_btn trigger_alert_modal" data-title="Confirm" data-desc="Are you sure want to delete this?" data-redirect="<?= base_url('panel/status/delete_cover_img/' . $status->id) ?>"><i class="fas fa-trash text-dark"></i> </a>
-                                                </div>
-                                                <img src="<?= base_url('assets/uploads/status/' . $status->image) ?>" class="img-fluid" />
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                               
+
+
+
+                             <!-- IMAGE UPLOAD --> <div class="form-group col-sm-12"> <label>Upload Image</label> <input type="file" name="statusCoverImg" class="form-control" accept=".jpg,.jpeg,.png"> <!-- ERROR --> <?php if (!empty($bioDescImgError)) : ?> <small class="text-danger"><?= $bioDescImgError ?></small> <?php endif; ?> </div> <!-- CURRENT IMAGE PREVIEW --> <?php if (!empty($status->image)) : ?> <div class="col-sm-12 mt-3"> <label>Current Image</label><br> <img src="<?= base_url('assets/uploads/status/'.$status->image) ?>" style="max-width:200px; border:1px solid #ddd; padding:5px;"> </div> <?php endif; ?>
+
+
+
+
+
 
                                     <div class="col-sm-12 mt-4">
                                         <button type="submit" class="btn btn-success float-right">Save</button>
